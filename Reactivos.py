@@ -1,60 +1,93 @@
-import json
+
 import datetime
 
 class Reactivo:
-    def __init__(self, nombre, descripcion, costo, categoria, inventario, unidad_medida, fecha_caducidad=None):
-        self.nombre = nombre
-        self.descripcion = descripcion
-        self.costo = costo
-        self.categoria = categoria
-        self.inventario = inventario
-        self.unidad_medida = unidad_medida
-        self.fecha_caducidad = fecha_caducidad
+    def __init__(self,id, nombre, descripcion, costo, categoria, inventario_disponible, unidad_medida,fecha_caducidad,minimo_sugerido,conversiones_posibles):
+        self.id=id
+        self.nombre=nombre
+        self.descripcion=descripcion
+        self.costo=costo
+        self.categoria=categoria
+        self.inventario_disponible=inventario_disponible
+        self.unidad_medida=unidad_medida
+        self.fecha_caducidad=fecha_caducidad
+        self.minimo_sugerido=minimo_sugerido
+        self.conversiones_posibles=conversiones_posibles
+        
+    
+    def show_attr(self):
+        atributos = [
+            f"Atributos del Reactivo:",
+            f"ID: {self.id}",
+            f"Nombre: {self.nombre}",
+            f"Descripción: {self.descripcion}",
+            f"Costo: {self.costo}",
+            f"Categoría: {self.categoria}",
+            f"Inventario Disponible: {self.inventario_disponible}",
+            f"Unidad de Medida: {self.unidad_medida}",
+            f"Fecha de Caducidad: {self.fecha_caducidad}",
+            f"Mínimo Sugerido: {self.minimo_sugerido}",
+        "Conversiones posibles:"
+    ]
 
-    def actualizar_inventario(self, cantidad):
-        self.inventario += cantidad
+        for i in self.conversiones_posibles:
+            for unidad, factor in i.items():
+                atributos.append(f"{unidad}: {factor}")
+    
+        return "\n".join(atributos)
 
-    def cambiar_unidad_medida(self, nueva_unidad):
-        self.unidad_medida = nueva_unidad
+    def crear(lista_r):
+        
+        id = len(lista_r)+1
+        nombre = input("Nombre del nuevo reactivo: ")
+        descripcion = input("Descripcion del nuevo reactivo: ")
+        costo = float(input("Costo del nuevo reactivo: "))
+        categoria = input("Categoria del nuevo reactivo: ")
+        inventario_disponible = int(input("Cantidad de inventario que posee el nuevo reactivo: "))
+        unidad_medida = input("Unidad de medida del nuevo reactivo: ")
+        fecha_caducidad = int(input("Fecha de caducidad del nuevo reactivo: "))
+        minimo_sugerido = float(input("Minimo sugerido del nuevo reactivo: "))
+        conversiones = int(input("Número de conversiones posibles del nuevo reactivo: "))
+        conversiones_posibles = []
+        for _ in range(conversiones):
+            unidad = input("Unidad de medida del nuevo reactivo: ")
+            factor = float(input("Factor de conversion del nuevo reactivo: ")) 
+            conversiones_posibles.append((unidad, factor))
+      
+        reactivo_nuevo = Reactivo(id, nombre, descripcion, costo, categoria, inventario_disponible, unidad_medida, fecha_caducidad, minimo_sugerido, conversiones_posibles)
+        lista_r.append(reactivo_nuevo)
+        return reactivo_nuevo, lista_r
+    
+    def editar(self, nombre, atributo, nuevo_valor):
 
-    def esta_caducado(self):
-        if self.fecha_caducidad:
-            return datetime.datetime.strptime(self.fecha_caducidad, '%Y-%m-%d').date() < datetime.date.today()
-        return False
-
-class GestionReactivos:
-    def __init__(self, archivo_datos='datos.json'):
-        self.reactivos = self.cargar_datos(archivo_datos)
-
-    def cargar_datos(self, archivo_datos):
-        try:
-            with open(archivo_datos, 'r') as f:
-                datos = json.load(f)
-            return [Reactivo(**r) for r in datos.get('reactivos', [])]
-        except FileNotFoundError:
-            return []
-
-    def guardar_datos(self, archivo_datos='datos.json'):
-        datos = {'reactivos': [r.__dict__ for r in self.reactivos]}
-        with open(archivo_datos, 'w') as f:
-            json.dump(datos, f, indent=4)
-
-    def agregar_reactivo(self, reactivo):
-        self.reactivos.append(reactivo)
-        self.guardar_datos()
-
-    def eliminar_reactivo(self, nombre):
-        self.reactivos = [r for r in self.reactivos if r.nombre != nombre]
-        self.guardar_datos()
-
-    def editar_reactivo(self, nombre, nuevos_datos):
+        nombre = input("Nombre del reactivo a editar: ")
+        atributo = input("Atributo del reactivo a editar: ")
+        nuevo_valor = input("Valor nuevo del atributo: ")
         for reactivo in self.reactivos:
             if reactivo.nombre == nombre:
-                for clave, valor in nuevos_datos.items():
-                    setattr(reactivo, clave, valor)
-        self.guardar_datos()
+                if hasattr(reactivo, atributo):
+                    setattr(reactivo, atributo, nuevo_valor)
+                    print(f'Atributo "{atributo}" del reactivo "{nombre}" actualizado a "{nuevo_valor}"')
+                else:
+                    print(f'El atributo "{atributo}" no existe en el reactivo "{nombre}"')
+                return
+        print(f'No hay reactivo con el nombre "{nombre}"')
 
-    def verificar_inventario_minimo(self, minimo):
         for reactivo in self.reactivos:
-            if reactivo.inventario < minimo:
-                print(f"¡Advertencia! El reactivo {reactivo.nombre} está por debajo del mínimo.")
+            if reactivo.id == id:
+                reactivo.editar_atributo(atributo, nuevo_valor)
+                return
+            print(f'No se encontró un reactivo con id: {id}')
+
+    def eliminar(self, lista_r):
+     
+        eliminar = input(f"¿Eliminar el reactivo {self.nombre}? \n1-si \n2-no ")
+        if eliminar == "1":
+            lista_r.remove(self)
+            print(f"El reactivo {self.nombre} eliminado")
+        else:
+         print("No se elimino ningun reactivo")
+
+    def verificar_inventario_minimo(self):
+            if self.inventario_disponible <= self.minimo_sugerido:
+                print(f"¡Advertencia! El reactivo {self.nombre} está por debajo del mínimo.")
