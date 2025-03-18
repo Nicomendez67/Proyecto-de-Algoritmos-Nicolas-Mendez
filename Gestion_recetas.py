@@ -6,4 +6,4 @@ class Gestion_recetas():
         recetas_objetos=[]
         for receta in recetas_json:
             recetas_objetos.append(Recetas(receta["id"], receta["nombre"], receta["objetivo"], receta["reactivos_utilizados"], receta["procedimiento"], receta["valores_a_medir"]))
-        app.recetas = recetas_objetos
+        labo.recetas = recetas_objetos
