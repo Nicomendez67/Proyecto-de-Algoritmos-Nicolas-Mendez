@@ -7,6 +7,6 @@ class Gestion_experimentos():
         experimento_objetos=[]
         for experimento in experimentos_json:
             experimento_objetos.append(Experimento(experimento["id"],experimento["receta_id"],experimento["personas_responsables"],experimento["fecha"],experimento["costo_asociado"],experimento["resultado"]))
-        app.experimento=experimento_objetos
+        labo.experimento=experimento_objetos
         return experimento_objetos
     
