@@ -36,7 +36,7 @@ class Reactivo:
     
         return "\n".join(atributos)
 
-    def crear(lista_r):
+    def crear_reactivos(lista_r):
         
         id = len(lista_r)+1
         nombre = input("Nombre del nuevo reactivo: ")
@@ -87,6 +87,14 @@ class Reactivo:
             print(f"El reactivo {self.nombre} eliminado")
         else:
          print("No se elimino ningun reactivo")
+
+    def esta_vencido(self):
+        if datetime.now() > self.fecha_caducidad:
+            print(f"El reactivo {self.fecha_caducidad} esta vencido")
+
+    def dias_para_vencer(self):
+        diferencia = self.fecha_caducidad - datetime.now()
+        return diferencia.days
 
     def verificar_inventario_minimo(self):
             if self.inventario_disponible <= self.minimo_sugerido:
