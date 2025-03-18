@@ -43,7 +43,7 @@ class Laboratorio_quimico ():
                 
                 if p1_reactivos == "1":
                     
-                    Reactivo.crear(lista_r)
+                    Reactivo.crear_reactivos(lista_r)
                     print("Reactivo Creado")
                     
                 if p1_reactivos == "2":
